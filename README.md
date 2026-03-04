@@ -1,2 +1,2 @@
-# pygame
-Dies ist Antons pygame
+inport pygame as py
+print("hallo")
