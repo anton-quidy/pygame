@@ -1,4 +1,5 @@
 import pygame
+import random
 import numpy as np
 pygame.font.init()
 my_font = pygame.font.SysFont('Arial', 30)
@@ -7,15 +8,17 @@ pygame.init()
 
 pygame.display.set_caption("Mein erstes Pygame")
 clock = pygame.time.Clock()
-
-# Farben und Startposition
-window = pygame.display.set_mode((1200, 1000))
 rect = pygame.Rect(0, 0, 25, 25)
 rect1 = pygame.Rect(0, 0, 25, 25)
-bomb = pygame.Rect(0, 0, 50, 50)
+# Farben und Startposition
+window = pygame.display.set_mode((1200, 1000))
+multi_größe_red = 1
+multi_größe_blue = 1
+Schatz = pygame.Rect(0, 0, 50, 50)
 x, y = 100, 100
-speed = 5
 
+speed = 5
+speed1 = 5
 def zähle_pixel(window):
 
     color_array = pygame.PixelArray(window)
@@ -38,6 +41,15 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+
+    if random.randint(1, 10000) == 1:
+        pygame.draw.rect(window, "yellow", Schatz)
+        
+
+
+
+
+
     # Tastatureingaben prüfen
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT]:  rect.x -= speed
@@ -46,13 +58,13 @@ while running:
     if keys[pygame.K_DOWN]:  rect.y += speed
 
 
-    if keys[pygame.K_a]:  rect1.x -= speed
-    if keys[pygame.K_d]:  rect1.x += speed
-    if keys[pygame.K_w]:  rect1.y -= speed
-    if keys[pygame.K_s]:  rect1.y += speed
-    if keys[pygame.K_SPACE]:    
-        bomb.x = rect1.x
-        pygame.draw.rect(window, "blue", bomb)
+    if keys[pygame.K_a]:  rect1.x -= speed1
+    if keys[pygame.K_d]:  rect1.x += speed1
+    if keys[pygame.K_w]:  rect1.y -= speed1
+    if keys[pygame.K_s]:  rect1.y += speed1
+   # if keys[pygame.K_SPACE]:    
+    
+    #    pygame.draw.rect(window, "blue", sc)
 
 
 
@@ -63,6 +75,12 @@ while running:
     rect1.centery = rect1.centery % window.get_height()
 
 
+
+
+    rect.width = multi_größe_red * 25
+    rect.height = multi_größe_red * 25
+    rect1.width = multi_größe_blue * 25
+    rect1.height = multi_größe_blue * 25
 
 
 
@@ -81,8 +99,18 @@ while running:
         red_count, blue_count = zähle_pixel(window)
         rounded_red = round(red_count / 1200000 * 100, 0)
         rounded_blue = round(blue_count / 1200000 * 100, 0)
-       
-       
+        
+
+
+
+
+    multi_größe_red = red_count / 1200000 + 1
+    multi_größe_blue = blue_count / 1200000 + 1
+    speed = 5 / multi_größe_red
+    speed1 = 5 / multi_größe_blue
+
+
+
 
     # 2. Pixel zählen (erfordert import numpy as np)
 
