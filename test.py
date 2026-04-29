@@ -11,14 +11,32 @@ clock = pygame.time.Clock()
 rect = pygame.Rect(0, 0, 25, 25)
 rect1 = pygame.Rect(0, 0, 25, 25)
 # Farben und Startposition
-window = pygame.display.set_mode((1200, 1000))
+x_Window = 1200
+y_Window = 1000
+window = pygame.display.set_mode((x_Window, y_Window))
 multi_größe_red = 1
 multi_größe_blue = 1
-Schatz = pygame.Rect(0, 0, 50, 50)
+Schatz = pygame.Rect(-100, -100, 50, 50)
 x, y = 100, 100
-
-speed = 5
+Schatz1 = False
+cout_for_Schatz = 0
+speed = 1
 speed1 = 5
+Abstands_Minimum = 20
+Big_Bonus_red = 0
+Speed_Bonus_red = 0
+Big_Bonus_blue = 0
+Speed_Bonus_blue = 0
+schatz_sound = pygame.mixer.Sound("puyopuyomegafan1234-winner-game-sound-404167(1).mp3")
+
+
+
+def berechne_abstand(Objekt, Objekt1):
+    dx = (Objekt1.x - Objekt.x)**2
+    dy = (Objekt1.y - Objekt.y)**2
+    Abstand = np.sqrt( dx + dy)
+    
+    return Abstand
 def zähle_pixel(window):
 
     color_array = pygame.PixelArray(window)
@@ -27,26 +45,67 @@ def zähle_pixel(window):
     blue_int = window.map_rgb((0, 0, 255))
     red_count  = np.count_nonzero(np_pixels == red_int)
     blue_count = np.count_nonzero(np_pixels == blue_int)
-
+    
     del color_array
 
     return red_count, blue_count
 
 
 # 2. Game Loop (Hauptschleife)
+
+
+
 running = True
 while running:
+    
     # Event-Abfrage (z.B. Fenster schließen)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
 
-    if random.randint(1, 10000) == 1:
-        pygame.draw.rect(window, "yellow", Schatz)
-        
 
 
+    if cout_for_Schatz != 100:
+        cout_for_Schatz += 1
+    
+
+
+
+
+    Schatz1 = False  
+    if cout_for_Schatz == 100:
+        cout_for_Schatz = 101
+        Schatz1 = True
+    if Schatz1 == True:
+        Schatz.x = random.randint(0, x_Window)
+        Schatz.y = random.randint(0, y_Window)
+        pygame.draw.rect(window, "yellow", Schatz) 
+
+
+    if berechne_abstand(rect, Schatz) <= Abstands_Minimum:
+        if random.randint(1, 2) == 1:
+            Speed_Bonus_red += 0.5
+        if random.randint(1, 2):
+            Big_Bonus_red += 0.5
+        pygame.draw.rect(window, "red", Schatz) 
+        Schatz.x = -1100
+        Schatz.y = -110
+        cout_for_Schatz = 0   
+        schatz_sound.play()
+
+
+
+    if berechne_abstand(rect1, Schatz) <= Abstands_Minimum:
+        if random.randint(1, 2) == 1:
+            Speed_Bonus_blue += 0.5
+        if random.randint(1, 2) == 1:
+            Big_Bonus_blue += 0.5
+        pygame.draw.rect(window, "blue", Schatz) 
+        Schatz.x = -1100
+        Schatz.y = -110
+        cout_for_Schatz = 0
+        schatz_sound.play()
 
 
 
@@ -77,10 +136,10 @@ while running:
 
 
 
-    rect.width = multi_größe_red * 25
-    rect.height = multi_größe_red * 25
-    rect1.width = multi_größe_blue * 25
-    rect1.height = multi_größe_blue * 25
+    rect.width = multi_größe_red * 25 + Big_Bonus_red
+    rect.height = multi_größe_red * 25 + Big_Bonus_red
+    rect1.width = multi_größe_blue * 25 + Big_Bonus_blue
+    rect1.height = multi_größe_blue * 25 + Big_Bonus_blue
 
 
 
@@ -106,7 +165,7 @@ while running:
 
     multi_größe_red = red_count / 1200000 + 1
     multi_größe_blue = blue_count / 1200000 + 1
-    speed = 5 / multi_größe_red
+    speed = 5 / multi_größe_red + Speed_Bonus_red
     speed1 = 5 / multi_größe_blue
 
 
